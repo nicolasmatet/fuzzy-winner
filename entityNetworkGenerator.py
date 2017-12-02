@@ -10,45 +10,29 @@ import networkx as nx
 logging.basicConfig(level=logging.INFO)
 
 entities_to_add = [
-    get_entity_dict(1, 0.3),
-    get_entity_dict(2, 0.25),
-    get_entity_dict(3, 0.15),
-    get_entity_dict(4, 0.3),
-    get_entity_dict(5, 0.25),
-    get_entity_dict(6, 0.05),
-
+    get_entity_dict(1, 0.1),
+    get_entity_dict(2, 0.08),
+    get_entity_dict(3, 0.4),
+    get_entity_dict(4, 0.05)
 ]
 
 accounts = [
     get_account_dict(1, "acc1", 0, 100),
-    get_account_dict(2, "acc1", 0, 100),
-    get_account_dict(3, "acc1", 0, 100),
-    get_account_dict(4, "acc1", 0, 100),
-    get_account_dict(5, "acc1", 0, 100),
-    get_account_dict(6, "acc1", 0, 100),
+    get_account_dict(1, "acc2", 0, 200),
+    get_account_dict(2, "acc1", 0, 0),
+    get_account_dict(3, "acc1", 0, 0),
+    get_account_dict(4, "acc1", 0, 0)
 
 ]
 
 transactions_to_add = [
+    {"initiator_entity": 1, "destinatary_entity": 2,
+     "transaction": get_transaction_dict("acc1", "acc1", 0.1, reference_accounts=[], transfer_ratio_bounds=(0, 0.1))},
     {"initiator_entity": 1, "destinatary_entity": 3,
-     "transaction": get_transaction_dict("acc1", "acc1", 0.2, transfer_ratio_bounds=(0, 0.5))},
-    {"initiator_entity": 2, "destinatary_entity": 5,
-     "transaction": get_transaction_dict("acc1", "acc1", 0.2, transfer_ratio_bounds=(0, 0.3))},
-    {"initiator_entity": 2, "destinatary_entity": 5,
-     "transaction": get_transaction_dict("acc1", "acc1", 0.2, transfer_ratio_bounds=(0, 0.2))},
-    {"initiator_entity": 3, "destinatary_entity": 1,
-     "transaction": get_transaction_dict("acc1", "acc1", 0.2, transfer_ratio_bounds=(0, 0.5))},
-    {"initiator_entity": 4, "destinatary_entity": 2,
-     "transaction": get_transaction_dict("acc1", "acc1", 0.2, transfer_ratio_bounds=(0, 0.5))},
-    {"initiator_entity": 5, "destinatary_entity": 4,
-     "transaction": get_transaction_dict("acc1", "acc1", 0.2, transfer_ratio_bounds=(0, 0.5))},
-    {"initiator_entity": 6, "destinatary_entity": 5,
-     "transaction": get_transaction_dict("acc1", "acc1", 0.2, transfer_ratio_bounds=(0, 0.5))},
-    {"initiator_entity": 4, "destinatary_entity": 1,
-     "transaction": get_transaction_dict("acc1", "acc1", 0.2, transfer_ratio_bounds=(0, 0.5))},
-    {"initiator_entity": 5, "destinatary_entity": 6,
-     "transaction": get_transaction_dict("acc1", "acc1", 0.2, transfer_ratio_bounds=(0, 0.5))},
-
+     "transaction": get_transaction_dict("acc1", "acc1", 0.1, reference_accounts=["acc2"],
+                                         transfer_ratio_bounds=(0, 0.1))},
+    {"initiator_entity": 3, "destinatary_entity": 4,
+     "transaction": get_transaction_dict("acc1", "acc1", 0.1, transfer_ratio_bounds=(0, 1))},
 ]
 
 entities_network = entitiesNetworkModule.EntitiesNetwork()
@@ -63,8 +47,6 @@ for transaction_to_add in transactions_to_add:
     destinatary_entity = transaction_to_add.get("destinatary_entity")
     transactions_dict = transaction_to_add.get("transaction")
     entities_network.add_transaction(initiator_entity, destinatary_entity, transactions_dict)
-
-
 
 entitiesNetworkModule.compute_initial_taxes(entities_network)
 print("initial mean tax rate = {:.2f} %".format(100 * entitiesNetworkModule.get_mean_tax_rate(entities_network)))

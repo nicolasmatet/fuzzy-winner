@@ -23,10 +23,12 @@ def compute_taxes(entity_data):
     logger.debug("Entity {} paid taxes = {:.2f}".format(entity_data.get("id"), tax_amount))
 
 
-def get_accounts_total(entity_data, quantity):
+def get_accounts_total(entity_data, quantity, accounts=None):
     total_value = 0
-    accounts = entity_data.get("accounts")
-    for account in accounts.nodes(data=True):
+    all_accounts = entity_data.get("accounts").nodes(data=True)
+    for account in all_accounts:
+        if accounts is not None and account[0] not in accounts:
+            continue
         account_data = account[-1]
         total_value += account_data.get(quantity)
     return total_value
