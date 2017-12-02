@@ -1,5 +1,6 @@
 import secrets
-
+import logging
+logger = logging.getLogger(__name__)
 
 def get_transaction_dict(initiator_account, destinatary_account, transfer_ratio, **kargs):
     transation_id = kargs.get("transaction_id", secrets.token_urlsafe(16))
@@ -19,3 +20,16 @@ def get_reference_accounts(initiator_entity, transaction_data):
     if reference_accounts is None or not len(reference_accounts):
         reference_accounts = set(initiator_entity.get("accounts").nodes())
     return reference_accounts
+
+
+def make_transactions(accounts, transactions_list, operation="debit"):
+    for transaction in transactions_list:
+        transaction_data = transaction[-1]
+        initiator_account = transaction_data.get("initiator_account")
+        account = accounts.node[initiator_account]
+        if operation == "debit":
+            account["final_balance"] -= transaction_data.get("computed_amount")
+        elif operation == "credit":
+            account["final_balance"] += transaction_data.get("computed_amount")
+        else:
+            logger.error("Unknown operation {}".format(operation))

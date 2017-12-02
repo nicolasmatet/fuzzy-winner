@@ -127,7 +127,6 @@ def draw_entity_network(entities_network):
     nx.draw(network, pos)
     node_labels = entities_network.get_account_balances_dict()
     nx.draw_networkx_labels(network, pos, labels=node_labels)
-    # edge_labels = nx.get_edge_attributes(network, 'computed_amount')
     nx.draw_networkx_edge_labels(network, pos, edge_labels={})
     plt.show()
 
@@ -184,20 +183,5 @@ class EntitiesNetwork:
             inbound_operations = self.get_network().in_edges(entity_id, data=True)
             entity = self.get_network().node[entity_id]
             accounts = entity.get("accounts")
-            self.make_transactions(accounts, outbound_operations, operation="debit")
-            self.make_transactions(accounts, inbound_operations, operation="credit")
-
-    def make_transactions(self, accounts, transactions_list, operation="debit"):
-        for transaction in transactions_list:
-            transaction_data = transaction[-1]
-            initiator_account = transaction_data.get("initiator_account")
-            account = accounts.node[initiator_account]
-            if operation == "debit":
-                account["final_balance"] -= transaction_data.get("computed_amount")
-            elif operation == "credit":
-                account["final_balance"] += transaction_data.get("computed_amount")
-            else:
-                logger.error("Unknown operation {}".format(operation))
-
-    def compute_transaction_amount(self, reference_entity, transfer_ratio):
-        return reference_entity.get("computed_revenue") * transfer_ratio
+            transactionModule.make_transactions(accounts, outbound_operations, operation="debit")
+            transactionModule.make_transactions(accounts, inbound_operations, operation="credit")
