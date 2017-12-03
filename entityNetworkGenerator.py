@@ -1,11 +1,13 @@
-from entityModule import get_entity_dict, add_account
-import entitiesNetworkModule
-import numpy as np
-from transactionModule import get_transaction_dict
-from accountsModule import get_account_dict, create_accounts_digraph
 import logging
-from scipy.optimize import fmin_l_bfgs_b, fmin_tnc
+import os
+import secrets
+
 import networkx as nx
+
+import entitiesNetworkModule
+from accountsModule import get_account_dict, create_accounts_digraph
+from entityModule import get_entity_dict, add_account
+from transactionModule import get_transaction_dict
 
 logging.basicConfig(level=logging.INFO)
 
@@ -47,9 +49,12 @@ for transaction_to_add in transactions_to_add:
     destinatary_entity = transaction_to_add.get("destinatary_entity")
     transactions_dict = transaction_to_add.get("transaction")
     entities_network.add_transaction(initiator_entity, destinatary_entity, transactions_dict)
+entities_network.update_network()
 
 entitiesNetworkModule.compute_initial_taxes(entities_network)
 print("initial mean tax rate = {:.2f} %".format(100 * entitiesNetworkModule.get_mean_tax_rate(entities_network)))
 entitiesNetworkModule.optimize_transfer_ratio(entities_network)
 print("optimized mean tax rate = {:.2f} %".format(100 * entitiesNetworkModule.get_mean_tax_rate(entities_network)))
+graph_name = os.path.join("gml", secrets.token_urlsafe(16) + ".graphml")
+nx.write_graphml(entities_network.get_network(), graph_name)
 entitiesNetworkModule.draw_entity_network(entities_network)

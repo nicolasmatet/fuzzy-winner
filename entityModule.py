@@ -8,7 +8,7 @@ def get_entity_dict(entity_id, tax_rate):
 def get_tax_amount(entity_data):
     tax_rate = entity_data.get("tax_rate", 0)
     taxable_income = get_taxable_income(entity_data)
-    return tax_rate * taxable_income
+    return float(tax_rate * taxable_income)
 
 
 def get_taxable_income(entity_data):
