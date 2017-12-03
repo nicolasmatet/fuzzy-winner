@@ -64,6 +64,7 @@ def compute_entities_taxes(entities_network):
         entity_data = entity[-1]
         entityModule.compute_taxes(entity_data)
 
+
 def get_total_taxes_amount(entities_network):
     total_taxes_amount = 0
     for entity in entities_network.get_network().nodes(data=True):
@@ -160,24 +161,45 @@ class EntitiesNetwork:
 
     def get_transaction_matrix_row(self, reference_transaction):
         reference_transaction_data = reference_transaction[-1]
-        initiator_entity_id = reference_transaction[0]
-        initiator_entity = self.get_network().node[initiator_entity_id]
-        reference_accounts = transactionModule.get_reference_accounts(initiator_entity, reference_transaction_data)
+        reference_entity_id = transactionModule.get_reference_entity_id(reference_transaction)
+        reference_entity_data = self._network.node[reference_entity_id]
+        reference_accounts = transactionModule.get_reference_accounts(reference_entity_data, reference_transaction_data)
         row = np.zeros(len(self.get_network().edges()))
         for idx, transaction in enumerate(self.get_network().edges(data=True)):
-            if transaction[-1].get("destinatary_account") in reference_accounts \
-                    and transaction[1] == initiator_entity_id:
+            if transaction[1] == reference_entity_id and \
+                            transaction[-1].get("destinatary_account") in reference_accounts:
                 row[idx] = 1
         return sparse.csr_matrix(row)
 
     def get_exogen_revenues_vector(self):
         exogen_revenues = []
         for transaction in self._network.edges(data=True):
-            transaction_data = transaction[-1]
-            initiator_entity_data = self._network.node[transaction[0]]
-            initiator_entity = self._network.node[transaction[0]]
-            reference_accounts = transactionModule.get_reference_accounts(initiator_entity, transaction_data)
+            reference_entity_id = transactionModule.get_reference_entity_id(transaction)
+            reference_entity_data = self._network.node[reference_entity_id]
+            reference_accounts = transactionModule.get_reference_accounts(reference_entity_data, transaction)
             total_exogen_revenue = \
-                entityModule.get_accounts_total(initiator_entity_data, "exogen_revenue", accounts=reference_accounts)
+                entityModule.get_accounts_total(reference_entity_data, "exogen_revenue", accounts=reference_accounts)
             exogen_revenues.append(total_exogen_revenue)
         return np.array(exogen_revenues)
+
+    def get_computed_transfer_ratios(self):
+        computed_transfer_ratios = []
+        transfer_ratio_calculations = nx.get_edge_attributes(self._network, "transfer_ratio_calculation")
+        for transaction, transfer_ratio_calculation in transfer_ratio_calculations.items():
+            if transfer_ratio_calculation == transactionModule.TRANSFER_RATIO_OUR:
+                pass
+            computed_transfer_ratio = self.get_transaction_computed_transfer_ratio(transaction)
+            computed_transfer_ratios.append(computed_transfer_ratio)
+        return np.array(computed_transfer_ratios)
+
+    def get_transaction_computed_transfer_ratio(self, transaction):
+        initiator_entity_id = transaction[0]
+        initiator_entity_revenue = self._network.node[initiator_entity_id].get("revenue")
+        initiator_outbound_operations = self.get_network().in_edges(initiator_entity_id, data=True, keys=True)
+        outbound_entity_revenues = 0
+        for initiator_outbound_operation in initiator_outbound_operations:
+            accounts = initiator_outbound_operation[-1].get("reference_accounts")
+            destinatary_entity_data = self._network.node[initiator_outbound_operation[2]]
+            outbound_entity_revenues += entityModule.get_accounts_total(destinatary_entity_data, "revenue",
+                                                                        accounts=accounts)
+        return initiator_entity_revenue / outbound_entity_revenues if outbound_entity_revenues != 0 else 0
