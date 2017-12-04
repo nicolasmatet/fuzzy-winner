@@ -2,6 +2,8 @@ import logging
 
 import networkx as nx
 
+import transactionModule
+
 logger = logging.getLogger(__name__)
 
 
@@ -23,8 +25,8 @@ def get_taxable_income(entity_data):
 
 def set_revenue(entity_data, inbound_transactions):
     """
-    Compute the revenue of eqch qccount inside the entity as well as the revenue of the entity
-    (which is the sum of each acount revenue)
+    Compute the revenue of each account inside the entity as well as the total revenue of the entity
+    (which is the sum of each account revenue)
     :param entity_data:
     :param inbound_transactions:
     :return:
@@ -36,6 +38,23 @@ def set_revenue(entity_data, inbound_transactions):
         revenues[destinatary_account] += transaction_amount
     nx.set_node_attributes(entity_data.get("accounts"), "computed_revenue", revenues)
     entity_data["computed_revenue"] = sum(revenues.values())
+
+
+def set_spendings(entity_data, outbound_transactions):
+    """
+    Compute the spendings of each account inside the entity as well as the total spending of the entity
+    (which is the sum of each account spending)
+    :param entity_data:
+    :param outbound_transactions:
+    :return:
+    """
+    spendings = nx.get_node_attributes(entity_data.get("accounts"), "exogen_spending")
+    for transaction in outbound_transactions:
+        transaction_amount = transaction[-1].get("computed_amount")
+        initiator_account = transaction[-1].get("initiator_account")
+        spendings[initiator_account] += transaction_amount
+    nx.set_node_attributes(entity_data.get("accounts"), "computed_spending", spendings)
+    entity_data["computed_spending"] = sum(spendings.values())
 
 
 def compute_taxes(entity_data):
@@ -53,6 +72,13 @@ def get_accounts_total(entity_data, quantity, accounts=None):
         account_data = account[-1]
         total_value += account_data.get(quantity)
     return total_value
+
+
+def get_total_exogen_transfer(entity_data, transaction_data):
+    reference_accounts = transactionModule.get_reference_accounts(entity_data, transaction_data)
+    if transaction_data.get("transfer_ratio_calculation") == transactionModule.TRANSFER_RATIO_THEIR:
+        return get_accounts_total(entity_data, "exogen_spending", accounts=reference_accounts)
+    return get_accounts_total(entity_data, "exogen_revenue", accounts=reference_accounts)
 
 
 def add_account(entity_data, account_data):

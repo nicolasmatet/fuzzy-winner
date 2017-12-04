@@ -19,6 +19,7 @@ def compute_taxes(transfer_ratio, *args):
     set_transaction_transfer_ratio(entities_network, transfer_ratio, computed_transfer_ratio)
     compute_transactions_amounts(entities_network)
     compute_entities_revenue(entities_network)
+    compute_entities_spendings(entities_network)
     compute_entities_final_accounts_balance(entities_network)
     compute_entities_taxes(entities_network)
     total_tax_amount = get_total_taxes_amount(entities_network)
@@ -31,14 +32,18 @@ def compute_computed_transfer_ratios(entities_network, constant_transfer_ratios)
     if not len(computed_transfer_ratios):
         return []
     res = 1
+    under_relaxation = 0.5
     while res > 1e-6:
         set_transaction_transfer_ratio(entities_network, constant_transfer_ratios, computed_transfer_ratios)
         compute_transactions_amounts(entities_network)
         compute_entities_revenue(entities_network)
-        new_computed_transfer_ratios = (entities_network.get_computed_transfer_ratios() + computed_transfer_ratios) / 2
+        compute_entities_spendings(entities_network)
+        new_computed_transfer_ratios = under_relaxation * entities_network.get_computed_transfer_ratios() \
+                                       + (1 - under_relaxation) * computed_transfer_ratios
         res = max(abs(new_computed_transfer_ratios - computed_transfer_ratios))
         computed_transfer_ratios = new_computed_transfer_ratios
     return computed_transfer_ratios
+
 
 def optimize_transfer_ratio(entities_network):
     x0 = entities_network.get_constant_transfer_ratios()
@@ -64,7 +69,6 @@ def set_transaction_transfer_ratio(entities_network, constant_transfer_rates_lis
     nx.set_edge_attributes(entities_network.get_network(), "transfer_ratio", transfer_ratios_dict)
 
 
-
 def compute_transactions_amounts(entities_network):
     """
     solve the (dual) linear problem M*X=V where:
@@ -80,19 +84,25 @@ def compute_transactions_amounts(entities_network):
     transaction_matrix = entities_network.transaction_matrix.multiply(transfer_ratio_vector)
     identity_matrix = sparse.csr_matrix(sparse.identity(transaction_matrix.shape[0]))
     transaction_amount_matrix = sparse.csr_matrix.transpose(identity_matrix - transaction_matrix)
-    exogen_revenue_share_vector = entities_network.exogen_revenues_vector * transfer_ratio_vector
-    transaction_amounts = sparse.linalg.spsolve(transaction_amount_matrix, exogen_revenue_share_vector)
+    exogen_transfer_share_vector = entities_network.exogen_transfers_vector * transfer_ratio_vector
+    transaction_amounts = sparse.linalg.spsolve(transaction_amount_matrix, exogen_transfer_share_vector)
     transaction_amount_dict = dict(zip(entities_network.get_network().edges_iter(keys=True), transaction_amounts))
     nx.set_edge_attributes(entities_network.get_network(), "computed_amount", transaction_amount_dict)
 
 
 def compute_entities_revenue(entities_network):
-    revenue_dict = dict()
     for entity_id in entities_network.get_network().nodes():
         inbound_transactions = entities_network.get_network().in_edges(entity_id, data=True)
         entity = entities_network.get_network().node[entity_id]
-        revenue = entityModule.set_revenue(entity, inbound_transactions)
-        revenue_dict[entity_id] = revenue
+        entityModule.set_revenue(entity, inbound_transactions)
+
+
+def compute_entities_spendings(entities_network):
+    for entity_id in entities_network.get_network().nodes():
+        outbound_transactions = entities_network.get_network().out_edges(entity_id, data=True)
+        entity = entities_network.get_network().node[entity_id]
+        entityModule.set_spendings(entity, outbound_transactions)
+
 
 def compute_entities_taxes(entities_network):
     for entity in entities_network.get_network().nodes(data=True):
@@ -143,7 +153,7 @@ class EntitiesNetwork:
     def __init__(self):
         self._network = nx.MultiDiGraph()
         self.transaction_matrix = None
-        self.exogen_revenues_vector = None
+        self.exogen_transfers_vector = None
         self.number_of_constant_transfer_ratio = 0
         self.number_of_computed_transfer_ratio = 0
 
@@ -159,7 +169,7 @@ class EntitiesNetwork:
 
     def update_network(self):
         self.transaction_matrix = self.get_transaction_matrix()
-        self.exogen_revenues_vector = self.get_exogen_revenues_vector()
+        self.exogen_transfers_vector = self.get_exogen_transfers_vector()
         self.number_of_constant_transfer_ratio = self.counts_constant_transfer_ratios()
         self.number_of_computed_transfer_ratio = len(self._network.edges()) - self.number_of_constant_transfer_ratio
 
@@ -193,11 +203,13 @@ class EntitiesNetwork:
             transactionModule.make_transactions(accounts, outbound_operations, operation="debit")
             transactionModule.make_transactions(accounts, inbound_operations, operation="credit")
 
-
     def get_transaction_matrix(self):
         """
         the transaction matrix is the matrix in which each row and column represents a transaction
         the matrix component (i,j) is 1 if the transaction i is received by one of the reference accounts
+        of the transaction j
+        If the transfer mode of transaction j is based on the earning of the destinatary rather than the revenue of
+        the initiator, then the component (i, j) is 1 if the transaction i is paid from one of the reference accounts
         of the transaction j
         :param :
         :return: nb_transaction * nb_transaction sparse matrix
@@ -214,21 +226,27 @@ class EntitiesNetwork:
         reference_accounts = transactionModule.get_reference_accounts(reference_entity_data, reference_transaction_data)
         row = np.zeros(len(self.get_network().edges()))
         for idx, transaction in enumerate(self.get_network().edges(data=True)):
-            if transaction[1] == reference_entity_id and \
-                    transaction[-1].get("destinatary_account") in reference_accounts:
-                row[idx] = 1
+            row[idx] = self.get_transaction_matrix_component(transaction, reference_entity_id, reference_accounts)
         return sparse.csr_matrix(row)
 
-    def get_exogen_revenues_vector(self):
-        exogen_revenues = []
+    @staticmethod
+    def get_transaction_matrix_component(transaction, reference_entity_id, reference_accounts):
+        if transaction[-1].get("transfer_ratio_calculation") == transactionModule.TRANSFER_RATIO_THEIR:
+            if transaction[0] == reference_entity_id and transaction[-1].get("initiator_account") in reference_accounts:
+                return 1
+            return 0
+        if transaction[1] == reference_entity_id and transaction[-1].get("destinatary_account") in reference_accounts:
+            return 1
+        return 0
+
+    def get_exogen_transfers_vector(self):
+        exogen_transfers = []
         for transaction in self._network.edges(data=True):
             reference_entity_id = transactionModule.get_reference_entity_id(transaction)
             reference_entity_data = self._network.node[reference_entity_id]
-            reference_accounts = transactionModule.get_reference_accounts(reference_entity_data, transaction[-1])
-            total_exogen_revenue = \
-                entityModule.get_accounts_total(reference_entity_data, "exogen_revenue", accounts=reference_accounts)
-            exogen_revenues.append(total_exogen_revenue)
-        return np.array(exogen_revenues)
+            total_exogen_transfer = entityModule.get_total_exogen_transfer(reference_entity_data, transaction[-1])
+            exogen_transfers.append(total_exogen_transfer)
+        return np.array(exogen_transfers)
 
     def get_constant_transfer_ratios(self):
         computed_transfer_ratios = []
@@ -246,7 +264,6 @@ class EntitiesNetwork:
                 transfer_ratio_bounds.append(transaction[-1].get("transfer_ratio_bounds"))
         return np.array(transfer_ratio_bounds)
 
-
     def get_computed_transfer_ratios(self):
         computed_transfer_ratios = []
         transfer_ratio_calculations = nx.get_edge_attributes(self._network, "transfer_ratio_calculation")
@@ -262,10 +279,12 @@ class EntitiesNetwork:
         initiator_entity = self._network.node[initiator_entity_id]
         initiator_entity_revenue = initiator_entity.get("computed_revenue")
         initiator_outbound_operations = self.get_network().out_edges(initiator_entity_id, data=True, keys=True)
-        outbound_entity_revenues = 0
+        outbound_entity_spendings = 0
         for initiator_outbound_operation in initiator_outbound_operations:
             accounts = transactionModule.get_reference_accounts(initiator_entity, initiator_outbound_operation[-1])
             destinatary_entity_data = self._network.node[initiator_outbound_operation[1]]
-            outbound_entity_revenues += entityModule.get_accounts_total(destinatary_entity_data, "computed_revenue",
-                                                                        accounts=accounts)
-        return initiator_entity_revenue / outbound_entity_revenues if outbound_entity_revenues != 0 else 0
+            outbound_entity_spendings += entityModule.get_accounts_total(destinatary_entity_data, "computed_spending",
+                                                                         accounts=accounts)
+        if outbound_entity_spendings != 0:
+            return initiator_entity_revenue / outbound_entity_spendings
+        return 1 / len(initiator_outbound_operations)

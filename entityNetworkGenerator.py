@@ -17,26 +17,24 @@ entities_to_add = [
 ]
 
 accounts = [
-    get_account_dict(1, "acc1", 0, 100),
-    get_account_dict(2, "acc1", 0, 100),
-    get_account_dict(3, "acc1", 0, 100),
-    get_account_dict(4, "acc1", 0, 200),
-    get_account_dict("holding", "acc1", 0, 0)
+    get_account_dict(1, "acc1", 0, 100, 0),
+    get_account_dict(2, "acc1", 0, 50, 0),
+    get_account_dict(3, "acc1", 0, 100, 1e-12),
+    get_account_dict(4, "acc1", 0, 100, 1e-12),
+    get_account_dict("holding", "acc1", 0, 0, 0)
 ]
 
 transactions_to_add = [
     {"initiator_entity": 1, "destinatary_entity": "holding",
-     "transaction": get_transaction_dict("acc1", "acc1", 0.1, transfer_ratio_bounds=(0, 0.1))},
+     "transaction": get_transaction_dict("acc1", "acc1", 0.1, transfer_ratio_bounds=(0, 1))},
     {"initiator_entity": 2, "destinatary_entity": "holding",
-     "transaction": get_transaction_dict("acc1", "acc1", 0.1, transfer_ratio_bounds=(0, 0.1))},
+     "transaction": get_transaction_dict("acc1", "acc1", 0.1, transfer_ratio_bounds=(0, 1))},
     {"initiator_entity": "holding", "destinatary_entity": 3,
-     "transaction": get_transaction_dict("acc1", "acc1", 0.1,
+     "transaction": get_transaction_dict("acc1", "acc1", 0.5,
                                          transfer_ratio_calculation=transactionModule.TRANSFER_RATIO_THEIR)},
     {"initiator_entity": "holding", "destinatary_entity": 4,
-     "transaction": get_transaction_dict("acc1", "acc1", 0.1,
+     "transaction": get_transaction_dict("acc1", "acc1", 0.5,
                                          transfer_ratio_calculation=transactionModule.TRANSFER_RATIO_THEIR)},
-    {"initiator_entity": 4, "destinatary_entity": 3, "transaction": get_transaction_dict("acc1", "acc1", 0.2)},
-
 ]
 
 entities_network = entitiesNetworkModule.EntitiesNetwork()
