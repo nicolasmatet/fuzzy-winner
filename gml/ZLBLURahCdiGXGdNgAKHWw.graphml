@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key attr.name="key" attr.type="long" for="edge" id="d9" />
+  <key attr.name="transfer_ratio_calculation" attr.type="string" for="edge" id="d8" />
+  <key attr.name="transfer_ratio" attr.type="double" for="edge" id="d7" />
+  <key attr.name="destinatary_account" attr.type="string" for="edge" id="d6" />
+  <key attr.name="initiator_account" attr.type="string" for="edge" id="d5" />
+  <key attr.name="id" attr.type="string" for="edge" id="d4" />
+  <key attr.name="paid_taxes" attr.type="double" for="node" id="d3" />
+  <key attr.name="computed_revenue" attr.type="long" for="node" id="d2" />
+  <key attr.name="tax_rate" attr.type="double" for="node" id="d1" />
+  <key attr.name="id" attr.type="long" for="node" id="d0" />
+  <graph edgedefault="directed">
+    <node id="1">
+      <data key="d0">1</data>
+      <data key="d1">0.1</data>
+      <data key="d2">0</data>
+      <data key="d3">25.0</data>
+    </node>
+    <node id="2">
+      <data key="d0">2</data>
+      <data key="d1">0.08</data>
+      <data key="d2">0</data>
+      <data key="d3">2.4</data>
+    </node>
+    <node id="3">
+      <data key="d0">3</data>
+      <data key="d1">0.4</data>
+      <data key="d2">0</data>
+      <data key="d3">7.2</data>
+    </node>
+    <node id="4">
+      <data key="d0">4</data>
+      <data key="d1">0.05</data>
+      <data key="d2">0</data>
+      <data key="d3">0.1</data>
+    </node>
+    <edge source="1" target="2">
+      <data key="d4">qpge60ij6xMz5Vab68vIXQ</data>
+      <data key="d5">acc1</data>
+      <data key="d6">acc1</data>
+      <data key="d7">0.1</data>
+      <data key="d8">OUR</data>
+      <data key="d9">0</data>
+    </edge>
+    <edge source="1" target="3">
+      <data key="d4">rCoPSwIHPfPR04jIuxS90A</data>
+      <data key="d5">acc1</data>
+      <data key="d6">acc1</data>
+      <data key="d7">0.1</data>
+      <data key="d8">OUR</data>
+      <data key="d9">0</data>
+    </edge>
+    <edge source="3" target="4">
+      <data key="d4">3Pgk3nFNniKKZfDjMyc29w</data>
+      <data key="d5">acc1</data>
+      <data key="d6">acc1</data>
+      <data key="d7">0.1</data>
+      <data key="d8">OUR</data>
+      <data key="d9">0</data>
+    </edge>
+  </graph>
+</graphml>

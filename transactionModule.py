@@ -62,11 +62,13 @@ def get_reference_accounts(reference_entity_data, transaction_data):
 def make_transactions(accounts, transactions_list, operation="debit"):
     for transaction in transactions_list:
         transaction_data = transaction[-1]
-        initiator_account = transaction_data.get("initiator_account")
-        account = accounts.node[initiator_account]
         if operation == "debit":
+            initiator_account = transaction_data.get("initiator_account")
+            account = accounts.node[initiator_account]
             account["final_balance"] -= transaction_data.get("computed_amount")
         elif operation == "credit":
+            destinatary_account = transaction_data.get("destinatary_account")
+            account = accounts.node[destinatary_account]
             account["final_balance"] += transaction_data.get("computed_amount")
         else:
             logger.error("Unknown operation {}".format(operation))

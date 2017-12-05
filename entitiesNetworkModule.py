@@ -6,10 +6,38 @@ from matplotlib import pyplot as plt
 from scipy import sparse
 from scipy.optimize import fmin_l_bfgs_b
 
+import accountsModule
 import entityModule
 import transactionModule
 
 logger = logging.getLogger(__name__)
+
+
+def create_entities_network(entities_dict_list, accounts_dict_list, transaction_dict_list):
+    entities_network = EntitiesNetwork()
+    for entity_dict in entities_dict_list:
+        entity_id = entity_dict.get("id")
+        entities_network.add_entity(entity_id, entity_dict, accountsModule.create_accounts_digraph([]))
+    for account_data in accounts_dict_list:
+        owner_entity_data = entities_network.get_network().node[account_data.get("owner_id")]
+        entityModule.add_account(owner_entity_data, account_data)
+    for transaction_to_add in transaction_dict_list:
+        initiator_entity = transaction_to_add.get("initiator_entity")
+        destinatary_entity = transaction_to_add.get("destinatary_entity")
+        transactions_dict = transaction_to_add.get("transaction")
+        entities_network.add_transaction(initiator_entity, destinatary_entity, transactions_dict)
+    entities_network.update_network()
+    return entities_network
+
+
+def solve_initial_network(entities_network):
+    compute_initial_taxes(entities_network)
+    print("initial mean tax rate = {:.2f} %".format(100 * get_mean_tax_rate(entities_network)))
+
+
+def solve_optimized_network(entities_network):
+    optimize_transfer_ratio(entities_network)
+    print("optimized mean tax rate = {:.2f} %".format(100 * get_mean_tax_rate(entities_network)))
 
 
 def compute_taxes(transfer_ratio, *args):
@@ -143,10 +171,31 @@ def draw_entity_network(entities_network):
     network = entities_network.get_network()
     pos = nx.spring_layout(network)
     nx.draw(network, pos)
-    node_labels = entities_network.get_account_balances_dict()
+    node_labels = get_drawing_node_labels(entities_network)
     nx.draw_networkx_labels(network, pos, labels=node_labels)
     nx.draw_networkx_edge_labels(network, pos, edge_labels={})
     plt.show()
+
+
+def get_drawing_node_labels(entities_network):
+    id_dict = nx.get_node_attributes(entities_network.get_network(), "id")
+    balances_dict = entities_network.get_account_balances_dict()
+    revenues_dict = nx.get_node_attributes(entities_network.get_network(), "computed_revenue")
+    spending_dict = nx.get_node_attributes(entities_network.get_network(), "computed_spending")
+    labels = ["id: {}\n"
+              "revenue: {:.3f}\n"
+              "spendings: {:.3f}\n"
+              "balance:{:.3f}".format(node_id, revenue, spending, balance)
+              for node_id,
+                  revenue,
+                  spending,
+                  balance
+              in zip(id_dict.values(),
+                     revenues_dict.values(),
+                     spending_dict.values(),
+                     balances_dict.values())]
+    node_labels = dict(zip(entities_network.get_network().nodes(), labels))
+    return node_labels
 
 
 class EntitiesNetwork:
