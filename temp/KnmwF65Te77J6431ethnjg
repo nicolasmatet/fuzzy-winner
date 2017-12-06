@@ -1,0 +1,47 @@
+digraph "" {
+label="Initial mean tax rate = 15.35 %";
+labelloc=t;
+"EG HYDRO SWITZERLAND" [accounts="", color=lightblue, computed_revenue="164.4", computed_spending="157.893626374", fillcolor=lightgrey, id="EG HYDRO SWITZERLAND", label="EG HYDRO SWITZERLAND\nrevenue: 164.40\nspendings: 157.89\ntaxes: 1.16\nbalance:6.51", paid_taxes="1.158134505494506", style=filled, tax_rate="0.178", tooltip="tax rate: 17.80 %"];
+"EG HYDRO FRANCE" [accounts="", color=lightblue, computed_revenue="126.373626374", computed_spending="53.0769230769", fillcolor=lightgrey, id="EG HYDRO FRANCE", label="EG HYDRO FRANCE\nrevenue: 126.37\nspendings: 53.08\ntaxes: 24.43\nbalance:73.30", paid_taxes="24.429791208791208", style=filled, tax_rate="0.3333", tooltip="tax rate: 33.33 %"];
+"EG HYDRO CHINA" [accounts="", color=lightblue, computed_revenue="115.164835165", computed_spending="26.4879120879", fillcolor=lightgrey, id="EG HYDRO CHINA", label="EG HYDRO CHINA\nrevenue: 115.16\nspendings: 26.49\ntaxes: 22.17\nbalance:88.68", paid_taxes="22.16923076923077", style=filled, tax_rate="0.25", tooltip="tax rate: 25.00 %"];
+"EG AVIATION IRELAND" [accounts="", color=lightblue, computed_revenue="276.52", computed_spending="1e-12", fillcolor=lightgrey, id="EG AVIATION IRELAND", label="EG AVIATION IRELAND\nrevenue: 276.52\nspendings: 0.00\ntaxes: 17.97\nbalance:276.52", paid_taxes="17.9738", style=filled, tax_rate="0.065", tooltip="tax rate: 6.50 %"];
+"EG AVIATION UK" [accounts="", color=lightblue, computed_revenue="100.0", computed_spending="45.0", fillcolor=lightgrey, id="EG AVIATION UK", label="EG AVIATION UK\nrevenue: 100.00\nspendings: 45.00\ntaxes: 11.00\nbalance:55.00", paid_taxes="11.0", style=filled, tax_rate="0.2", tooltip="tax rate: 20.00 %"];
+"EG HYDRO SWITZERLAND" -> "EG AVIATION IRELAND"  [computed_amount="131.52", destinatary_account="IR23 5412 4567 8953 1547 82", id="6LSgvBsZC-b77vpbME6MXg", initiator_account="CH12 4568 4623 5896 4587 21", key=0, label="131.52 (80.00 %)", labeltooltip="transfer ratio: 80.00 %", reference_accounts="{'CH12 4568 4623 5896 4587 21', 'CH78 4256 4874 9125 6532 56'}", transfer_ratio="0.8", transfer_ratio_bounds="(0, 0.5)", transfer_ratio_calculation=OUR];
+"EG HYDRO SWITZERLAND" -> "EG HYDRO FRANCE"  [computed_amount="26.3736263736", destinatary_account="FR24 1235 4578 9876 5874  23", id=PFBbJp1PxKQm1CHXfPGyMA, initiator_account="CH12 4568 4623 5896 4587 21", key=0, label="26.37 (30.00 %)", labeltooltip="transfer ratio: 30.00 %", reference_accounts="{'CH12 4568 4623 5896 4587 21'}", transfer_ratio="0.3", transfer_ratio_bounds="(0, 1)", transfer_ratio_calculation=OUR];
+"EG HYDRO FRANCE" -> "EG HYDRO SWITZERLAND"  [computed_amount="37.9120879121", destinatary_account="CH12 4568 4623 5896 4587 21", id="m7umotyZNqjONg3op-FVnQ", initiator_account="FR24 1235 4578 9876 5874  23", key=0, label="37.91 (30.00 %)", labeltooltip="transfer ratio: 30.00 %", reference_accounts="{'FR24 1235 4578 9876 5874  23'}", transfer_ratio="0.3", transfer_ratio_bounds="(0, 0.5)", transfer_ratio_calculation=OUR];
+"EG HYDRO FRANCE" -> "EG HYDRO CHINA"  [computed_amount="15.1648351648", destinatary_account="CN45 8574 5698 4785 2365 14", id=L1n3gO3PYgNkNjHM9EFodw, initiator_account="FR24 1235 4578 9876 5874  23", key=0, label="15.16 (12.00 %)", labeltooltip="transfer ratio: 12.00 %", reference_accounts="{'FR24 1235 4578 9876 5874  23'}", transfer_ratio="0.12", transfer_ratio_bounds="(0, 0.5)", transfer_ratio_calculation=OUR];
+"EG HYDRO CHINA" -> "EG HYDRO SWITZERLAND"  [computed_amount="26.4879120879", destinatary_account="CH78 4256 4874 9125 6532 56", id=xkuDiV9z8yHoon_Oo7jiWQ, initiator_account="CN45 8574 5698 4785 2365 14", key=0, label="26.49 (23.00 %)", labeltooltip="transfer ratio: 23.00 %", reference_accounts="{'CN45 8574 5698 4785 2365 14'}", transfer_ratio="0.23", transfer_ratio_bounds="(0, 0.5)", transfer_ratio_calculation=OUR];
+"EG AVIATION UK" -> "EG AVIATION IRELAND"  [computed_amount="45.0", destinatary_account="IR23 5412 4567 8953 1547 82", id=JQPuoOkBOrcU_FYXqCTA7g, initiator_account="UK54 2546 8741 6873 6984 52", key=0, label="45.00 (45.00 %)", labeltooltip="transfer ratio: 45.00 %", reference_accounts="{'UK54 2546 8741 6873 6984 52'}", transfer_ratio="0.45", transfer_ratio_bounds="(0, 0.5)", transfer_ratio_calculation=OUR];
+subgraph "" {
+name="cluster_EG HYDRO SWITZERLAND";
+"CH12 4568 4623 5896 4587 21\ninitial balance 0.000\nfinal balance -69.982\n" [style=rectangle, tooltip="exogen revenue 50.00   /   exogen spendings 0.00"];
+"EG HYDRO SWITZERLAND" -> "CH12 4568 4623 5896 4587 21\ninitial balance 0.000\nfinal balance -69.982\n"  [arrowhead=none, style=dotted];
+"CH78 4256 4874 9125 6532 56\ninitial balance 0.000\nfinal balance 76.488\n" [style=rectangle, tooltip="exogen revenue 50.00   /   exogen spendings 0.00"];
+"EG HYDRO SWITZERLAND" -> "CH78 4256 4874 9125 6532 56\ninitial balance 0.000\nfinal balance 76.488\n"  [arrowhead=none, style=dotted];
+}
+
+subgraph "" {
+name="cluster_EG HYDRO FRANCE";
+"FR24 1235 4578 9876 5874  23\ninitial balance 0.000\nfinal balance 73.297\n" [style=rectangle, tooltip="exogen revenue 100.00   /   exogen spendings 0.00"];
+"EG HYDRO FRANCE" -> "FR24 1235 4578 9876 5874  23\ninitial balance 0.000\nfinal balance 73.297\n"  [arrowhead=none, style=dotted];
+}
+
+subgraph "" {
+name="cluster_EG HYDRO CHINA";
+"CN45 8574 5698 4785 2365 14\ninitial balance 0.000\nfinal balance 88.677\n" [style=rectangle, tooltip="exogen revenue 100.00   /   exogen spendings 0.00"];
+"EG HYDRO CHINA" -> "CN45 8574 5698 4785 2365 14\ninitial balance 0.000\nfinal balance 88.677\n"  [arrowhead=none, style=dotted];
+}
+
+subgraph "" {
+name="cluster_EG AVIATION IRELAND";
+"IR23 5412 4567 8953 1547 82\ninitial balance 0.000\nfinal balance 276.520\n" [style=rectangle, tooltip="exogen revenue 100.00   /   exogen spendings 0.00"];
+"EG AVIATION IRELAND" -> "IR23 5412 4567 8953 1547 82\ninitial balance 0.000\nfinal balance 276.520\n"  [arrowhead=none, style=dotted];
+}
+
+subgraph "" {
+name="cluster_EG AVIATION UK";
+"UK54 2546 8741 6873 6984 52\ninitial balance 0.000\nfinal balance 55.000\n" [style=rectangle, tooltip="exogen revenue 100.00   /   exogen spendings 0.00"];
+"EG AVIATION UK" -> "UK54 2546 8741 6873 6984 52\ninitial balance 0.000\nfinal balance 55.000\n"  [arrowhead=none, style=dotted];
+}
+
+}

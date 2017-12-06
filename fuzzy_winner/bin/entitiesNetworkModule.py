@@ -2,7 +2,6 @@ import logging
 
 import networkx as nx
 import numpy as np
-from matplotlib import pyplot as plt
 from scipy import sparse
 from scipy.optimize import fmin_l_bfgs_b
 
@@ -104,7 +103,9 @@ def optimize_transfer_ratio(entities_network):
 
 def compute_initial_taxes(entities_network):
     x0 = entities_network.get_constant_transfer_ratios()
-    return compute_taxes(x0, entities_network)
+    compute_taxes(x0, entities_network)
+    # re-compute taxes without negative taxes
+    compute_entities_taxes(entities_network, include_negative_cash_flow=False)
 
 
 def set_transaction_transfer_ratio(entities_network, constant_transfer_rates_list, computed_transfer_ratio_list):
@@ -189,37 +190,6 @@ def get_mean_tax_rate(entities_network):
 def compute_entities_final_accounts_balance(entities_network):
     entities_network.cash_in_exogen_revenues()
     entities_network.make_internal_transactions()
-
-
-def draw_entity_network(entities_network):
-    network = entities_network.get_network()
-    pos = nx.spring_layout(network)
-    nx.draw(network, pos)
-    node_labels = get_drawing_node_labels(entities_network)
-    nx.draw_networkx_labels(network, pos, labels=node_labels)
-    nx.draw_networkx_edge_labels(network, pos, edge_labels={})
-    plt.show()
-
-
-def get_drawing_node_labels(entities_network):
-    id_dict = nx.get_node_attributes(entities_network.get_network(), "id")
-    balances_dict = entities_network.get_account_balances_dict()
-    taxes_dict = nx.get_node_attributes(entities_network.get_network(), "paid_taxes")
-    revenues_dict = nx.get_node_attributes(entities_network.get_network(), "computed_revenue")
-    spending_dict = nx.get_node_attributes(entities_network.get_network(), "computed_spending")
-    labels = ["{}\n"
-              "revenue: {:.3f}\n"
-              "spendings: {:.3f}\n"
-              "taxes: {:.3f}\n"
-              "balance:{:.3f}".format(node_id, revenue, spending, taxes_dict, balance)
-              for node_id, revenue, spending, taxes_dict, balance
-              in zip(id_dict.values(),
-                     revenues_dict.values(),
-                     spending_dict.values(),
-                     taxes_dict.values(),
-                     balances_dict.values())]
-    node_labels = dict(zip(entities_network.get_network().nodes(), labels))
-    return node_labels
 
 
 class EntitiesNetwork:

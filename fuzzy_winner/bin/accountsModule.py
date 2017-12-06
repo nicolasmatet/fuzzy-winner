@@ -29,3 +29,15 @@ def get_account_labels(accounts_digraph):
                      final_balance.values())]
     node_labels = dict(zip(accounts_digraph.nodes(), labels))
     return node_labels
+
+
+def get_account_tooltip(accounts_digraph):
+    exogen_revenue_dict = nx.get_node_attributes(accounts_digraph, "exogen_revenue")
+    exogen_spending_dict = nx.get_node_attributes(accounts_digraph, "exogen_spending")
+    labels = ["exogen revenue {:.2f}   /   "
+              "exogen spendings {:.2f}".format(exogen_revenue, exogen_spending)
+              for exogen_revenue, exogen_spending
+              in zip(exogen_revenue_dict.values(),
+                     exogen_spending_dict.values())]
+    node_labels = dict(zip(accounts_digraph.nodes(), labels))
+    return node_labels

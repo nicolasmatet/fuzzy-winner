@@ -101,3 +101,31 @@ def cash_in_exogen_revenues(entity_data):
     for account in accounts.nodes(data=True):
         account_data = account[-1]
         account_data["final_balance"] = account_data["initial_balance"] + account_data.get("exogen_revenue", 0)
+
+
+def get_entities_labels(entities_network):
+    id_dict = nx.get_node_attributes(entities_network.get_network(), "id")
+    balances_dict = entities_network.get_account_balances_dict()
+    taxes_dict = nx.get_node_attributes(entities_network.get_network(), "paid_taxes")
+    revenues_dict = nx.get_node_attributes(entities_network.get_network(), "computed_revenue")
+    spending_dict = nx.get_node_attributes(entities_network.get_network(), "computed_spending")
+    labels = ["{}\n"
+              "revenue: {:.2f}\n"
+              "spendings: {:.2f}\n"
+              "taxes: {:.2f}\n"
+              "balance:{:.2f}".format(node_id, revenue, spending, taxes_dict, balance)
+              for node_id, revenue, spending, taxes_dict, balance
+              in zip(id_dict.values(),
+                     revenues_dict.values(),
+                     spending_dict.values(),
+                     taxes_dict.values(),
+                     balances_dict.values())]
+    node_labels = dict(zip(entities_network.get_network().nodes(), labels))
+    return node_labels
+
+
+def get_entities_tooltips(entities_network):
+    tax_rate_dict = nx.get_node_attributes(entities_network.get_network(), "tax_rate")
+    labels = ["tax rate: {:.2f} %".format(100 * tax_rate) for tax_rate in tax_rate_dict.values()]
+    entities_tooltips = dict(zip(entities_network.get_network().nodes(), labels))
+    return entities_tooltips

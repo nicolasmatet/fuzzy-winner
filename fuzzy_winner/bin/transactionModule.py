@@ -78,13 +78,15 @@ def make_transactions(accounts, transactions_list, operation="debit"):
 
 def get_transactions_labels(entities_network):
     computed_amounts_dict = nx.get_edge_attributes(entities_network.get_network(), "computed_amount")
-    labels = ["{:.2f}".format(computed_amount) for computed_amount in computed_amounts_dict.values()]
+    transfer_ratios_dict = nx.get_edge_attributes(entities_network.get_network(), "transfer_ratio")
+    labels = ["{:.2f} ({:.2f} %)".format(computed_amount, 100 * transfer_ratio)
+              for computed_amount, transfer_ratio
+              in zip(computed_amounts_dict.values(), transfer_ratios_dict.values())]
     transaction_labels = dict(zip(entities_network.get_network().edges(keys=True), labels))
     return transaction_labels
-
 
 def get_transactions_tooltips(entities_network):
-    tax_rate_dict = nx.get_edge_attributes(entities_network.get_network(), "computed_amount")
-    labels = ["{:.2f}".format(computed_amount) for computed_amount in computed_amounts_dict.values()]
-    transaction_labels = dict(zip(entities_network.get_network().edges(keys=True), labels))
-    return transaction_labels
+    transfer_ratios_dict = nx.get_edge_attributes(entities_network.get_network(), "transfer_ratio")
+    labels = ["transfer ratio: {:.2f} %".format(100 * value) for value in transfer_ratios_dict.values()]
+    transaction_tooltips = dict(zip(entities_network.get_network().edges(keys=True), labels))
+    return transaction_tooltips
