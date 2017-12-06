@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    {% load static %}
+    <!-- Basic Page Needs
+    ================================================== -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Graph tool demonstrator</title>
+
+    <!-- Favicons
+    ================================================== -->
+    <link rel="shortcut icon" href="{% static 'fuzzy_winner/img/favicon.ico'%}" type="image/x-icon">
+    <!-- Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="{% static 'fuzzy_winner/css/bootstrap.css'%}">
+    <link rel="stylesheet" type="text/css" href="{% static 'fuzzy_winner/font-awesome-4.2.0/css/font-awesome.css'%}">
+    <!-- Stylesheet
+    ================================================== -->
+    <link rel="stylesheet" type="text/css" href="{% static 'fuzzy_winner/css/style.css'%}">
+
+
+    <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+
+    <script type="text/javascript" src="{% static 'js/modernizr.custom.js' %}"></script>
+
+    <script type="text/javascript"> var data = {{the_data|safe}};</script>
+
+</head>
+<body>
+
+
+<div id="mainview">
+
+    <div class="content">
+        {% if image_data != '' %}
+        <iframe id="svgiframe" src={{image_data}} width="800px" height="800px"></iframe>
+        {% endif %}
+    </div>
+
+</div>
+
+
+<div id="controls">
+
+    <div class="row ">
+
+        <form class="form" action="{% url 'fuzzy_winner:plot' %}" id="file_form" method="post">
+            {% csrf_token %}
+            <h2>{{file_form.title}}</h2>
+            <h3>{{file_form.desc}}</h3>
+            {{ file_form }}
+            <input type="submit" name="see_transaction" value="See transactions"/>
+            <input type="submit" name="optimize_transaction" value="Optimize transactions"/>
+        </form>
+
+
+        <form class="form" action="{% url 'fuzzy_winner:delete_file' %}" id="deletion_form" method="post">
+            {% csrf_token %}
+            <h2>{{deletion_form.title}}</h2>
+            <h3>{{deletion_form.desc}}</h3>
+
+            {{ deletion_form }}
+            <input type="submit" value="Delete selected files"/>
+        </form>
+
+        <form class="form" enctype="multipart/form-data" action="{% url 'fuzzy_winner:upload' %}" id="upload_form"
+              method="post">
+            {% csrf_token %}
+            <h2>{{upload_form.title}}</h2>
+            <h3>{{upload_form.desc}}</h3>
+            {{ upload_form }}
+            <input type="submit" value="Upload file"/>
+        </form>
+
+
+        <div>
+
+
+        </div>
+
+    </div>
+</div>
+
+
+<div id="contact">
+    <div class="container">
+        <div class="section-title text-center">
+            <h2>Contact me</h2>
+            <hr>
+        </div>
+        <div class="space"></div>
+
+        <div class="row">
+            <div class="col-md-3">
+                <address>
+                    <strong>Address</strong><br>
+                    <br>
+                    Nicolas Matet<br>
+                    3 bis rue Monge<br>
+                    38000, Grenoble<br>
+                    Phone: +33 6 01 72 73 52
+                </address>
+            </div>
+
+
+            <div class="col-md-9">
+                <form autocomplete="on" action="{% url 'fuzzy_winner:contact' %}" id="contact_form" method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" placeholder="Your Name" name="name">
+                            <input type="text" class="form-control" placeholder="Phone No." name="phone">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" placeholder="Email" name="email">
+                            <input type="text" class="form-control" placeholder="Subject" name="subject">
+                        </div>
+                    </div>
+                    <textarea class="form-control" rows="4" placeholder="Message" name="message"></textarea>
+                    <div class="text-right">
+                        <input type="submit" value="Send" class="btn send-btn"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<nav id="footer">
+    <div class="container">
+        <div class="pull-left">
+            <p>2017</p>
+        </div>
+        <div class="pull-right">
+            <a href="#home" class="page-scroll">Back to Top <span class="fa fa-angle-up"></span></a>
+        </div>
+    </div>
+</nav>
+
+
+<!-- jQuery  -->
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+
+
+<!-- Javascripts
+================================================== -->
+<script type="text/javascript" src="{% static 'fuzzy_winner/js/main.js' %}"></script>
+
+<script>  {{the_script|safe}}</script>
+
+</body>
+</html>
+
