@@ -7,14 +7,20 @@ from . import entityModule
 from . import transactionModule
 from . import utils
 
+""""
+This module parses an input .xlsx file to define the entities, transactions and accounts of the network
+"""
+
 logging.basicConfig(level=logging.DEBUG)
 
+# define the header of data blocks as well as the length (in rows) of each block type
 ENTITY_TYPE = "entity"
 TRANSACTION_TYPE = "transaction"
 ACCOUNT_TYPE = "account"
 accounting_data_length = {ENTITY_TYPE: 2, TRANSACTION_TYPE: 6, ACCOUNT_TYPE: 5}
 
-MAX_COL_NUMBER = 100
+# max number of items that can be defined
+MAX_COL_NUMBER = 10000
 
 
 def is_end_of_data(cell):
@@ -61,6 +67,13 @@ def get_accounting_object_dict_from_data(data, object_type):
 
 
 def get_account_object_list(accounting_sheet, row, object_type):
+    """
+    Get a list of object dictionaries. Object are either "entites", "transactions" or "accounts"
+    :param accounting_sheet:
+    :param row: current row object
+    :param object_type: either "entites", "transactions" or "accounts"
+    :return:
+    """
     initial_row = row[0].row + 1
     final_row = initial_row + accounting_data_length.get(object_type) - 1
     entities_list = []
@@ -77,11 +90,20 @@ def get_account_object_list(accounting_sheet, row, object_type):
 
 
 def read_accounting_book(path_to_file):
+    """
+    Parse an .xlsx file to define lists of entities, accounts and transaction that will be used to construct the entity graph
+    :param path_to_file: path to the .xlsx file
+    :return:
+    all_entities_list: list of entity dictionaries used in this entity network
+    all_accounts_list: list of all_accounts dictionaries used in this entity network
+    all_transactions_list: list of all_transactions dictionaries used in this entity network
+    """
     all_entities_list = []
     all_accounts_list = []
     all_transactions_list = []
     accounting_book = xl.load_workbook(path_to_file)
     accounting_sheet = accounting_book.get_sheet_by_name("1_DEFINITIONS")
+    # read the first 50 rows, begining by the cell A1
     for row in accounting_sheet.iter_rows(min_row=1, max_col=1, max_row=50):
         if row[0].value == "entities":
             all_entities_list.extend(get_account_object_list(accounting_sheet, row, ENTITY_TYPE))

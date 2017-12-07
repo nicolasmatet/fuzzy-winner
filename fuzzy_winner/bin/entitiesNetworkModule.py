@@ -13,17 +13,59 @@ logger = logging.getLogger(__name__)
 
 
 def create_entities_network(entities_dict_list, accounts_dict_list, transaction_dict_list):
+    """
+    Create an entity network from list of entities, accounts and transaction
+    :param entities_dict_list: list of entities dictionaries
+    :param accounts_dict_list: list of account dictionaries
+    :param transaction_dict_list: list of transactions dictionaries
+    :return: networkx.MultiDiGraph
+    """
     entities_network = EntitiesNetwork()
-    account_id_to_entity_id_dict = dict()
+    add_entities_nodes(entities_network, entities_dict_list)
+    account_id_to_entity_id_dict = add_accounts_nodes_to_entities(entities_network, accounts_dict_list)
+    add_transactions_edges__between_entities(entities_network, transaction_dict_list, account_id_to_entity_id_dict)
+    # compute a matrix representation of the network
+    entities_network.update_network()
+    return entities_network
+
+
+def add_entities_nodes(entities_network, entities_dict_list):
+    """
+    create the entities nodes inside the entities_network
+    :param entities_network:
+    :param entities_dict_list:
+    :return:
+    """
     for entity_dict in entities_dict_list:
         entity_id = entity_dict.get("id")
         entities_network.add_entity(entity_id, entity_dict, accountsModule.create_accounts_digraph([]))
+
+
+def add_accounts_nodes_to_entities(entities_network, accounts_dict_list):
+    """
+    add accounts nodes to entities contained in the entities_network
+    :param entities_network:
+    :param accounts_dict_list:
+    :return: dictionary account_id --> owner entity id
+    """
+    account_id_to_entity_id_dict = dict()
     for account_data in accounts_dict_list:
         owner_entity_data = get_account_owner_entity_data(entities_network, account_data.get("owner_id"))
         if owner_entity_data is None:
             continue
         entityModule.add_account(owner_entity_data, account_data)
         account_id_to_entity_id_dict[account_data.get("id")] = owner_entity_data.get("id")
+    return accounts_dict_list
+
+
+def add_transactions_edges__between_entities(entities_network, transaction_dict_list, account_id_to_entity_id_dict):
+    """
+    add transactions between entities
+    :param entities_network:
+    :param transaction_dict_list:
+    :param account_id_to_entity_id_dict:
+    :return:
+    """
     for transaction_to_add in transaction_dict_list:
         initiator_entity = get_entity_id_from_account_id(transaction_to_add.get("initiator_account"),
                                                          account_id_to_entity_id_dict)
@@ -32,11 +74,15 @@ def create_entities_network(entities_dict_list, accounts_dict_list, transaction_
         if initiator_entity is None or destinatary_entity is None:
             continue
         entities_network.add_transaction(initiator_entity, destinatary_entity, transaction_to_add)
-    entities_network.update_network()
-    return entities_network
 
 
 def get_account_owner_entity_data(entities_network, owner_id):
+    """
+    get the data of an entity based on its id
+    :param entities_network:
+    :param owner_id:
+    :return: dictionary of entity data
+    """
     try:
         return entities_network.get_network().node[owner_id]
     except KeyError:
@@ -45,6 +91,12 @@ def get_account_owner_entity_data(entities_network, owner_id):
 
 
 def get_entity_id_from_account_id(account_id, account_id_to_entity_id_dict):
+    """
+    retrieve the id of the entity from an unique account id
+    :param account_id:
+    :param account_id_to_entity_id_dict:  dictionary account id --> entity id
+    :return: entity_id
+    """
     entity_id = account_id_to_entity_id_dict.get(account_id, None)
     if account_id is None:
         logger.error("Account {} is not associated to any entity.".format(account_id))
@@ -52,18 +104,38 @@ def get_entity_id_from_account_id(account_id, account_id_to_entity_id_dict):
 
 
 def solve_initial_network(entities_network):
+    """
+    computes transaction amount, revenues and final balance of accounts and taxes paid by the entities
+    for the transaction ratio as defined by the user
+    :param entities_network:
+    :return:
+    """
     compute_initial_taxes(entities_network)
     print("initial mean tax rate = {:.2f} %".format(100 * get_mean_tax_rate(entities_network)))
 
 
 def solve_optimized_network(entities_network):
+    """
+    optimizes the transaction ratio to minimize total taxes
+    then computes transaction amount, revenues and final balance of accounts and taxes paid by the entities
+    for the transaction ratio as defined by the user
+    :param entities_network:
+    :return:
+    """
     optimize_transfer_ratio(entities_network)
     print("optimized mean tax rate = {:.2f} %".format(100 * get_mean_tax_rate(entities_network)))
 
 
 def compute_taxes(transfer_ratio, *args):
+    """
+    Solve the problem as a linear system
+    :param transfer_ratio:
+    :param args:
+    :return:
+    """
     logger.debug("transfer ratios = {}".format(str(transfer_ratio)))
     entities_network = args[0]
+    # inner loop to evaluate the transfer ratios that should be computed from the state of the network
     computed_transfer_ratio = compute_computed_transfer_ratios(entities_network, transfer_ratio)
     set_transaction_transfer_ratio(entities_network, transfer_ratio, computed_transfer_ratio)
     compute_transactions_amounts(entities_network)
@@ -76,6 +148,14 @@ def compute_taxes(transfer_ratio, *args):
 
 
 def compute_computed_transfer_ratios(entities_network, constant_transfer_ratios):
+    """
+    inner loop to compute transfer ratios that are computed from the state of the system.
+    This is the case for the transfer ratios of the "THEIR" transaction.
+    Iteratively converge to the value of the computed transfers ratios
+    :param entities_network:
+    :param constant_transfer_ratios:
+    :return:
+    """
     computed_transfer_ratios = np.array([0] * entities_network.number_of_computed_transfer_ratio)
     if not len(computed_transfer_ratios):
         return []
@@ -94,6 +174,11 @@ def compute_computed_transfer_ratios(entities_network, constant_transfer_ratios)
 
 
 def optimize_transfer_ratio(entities_network):
+    """
+    launch the optiéization of the transfer ratio.
+    :param entities_network:
+    :return:
+    """
     x0 = entities_network.get_constant_transfer_ratios()
     bounds = entities_network.get_transfer_ratio_bounds()
     fmin_l_bfgs_b(compute_taxes, x0, args=tuple([entities_network]), bounds=bounds, approx_grad=True, epsilon=1e-12)
@@ -102,6 +187,11 @@ def optimize_transfer_ratio(entities_network):
 
 
 def compute_initial_taxes(entities_network):
+    """
+    Launch the solver to compute initial taxes
+    :param entities_network:
+    :return:
+    """
     x0 = entities_network.get_constant_transfer_ratios()
     compute_taxes(x0, entities_network)
     # re-compute taxes without negative taxes
@@ -109,6 +199,14 @@ def compute_initial_taxes(entities_network):
 
 
 def set_transaction_transfer_ratio(entities_network, constant_transfer_rates_list, computed_transfer_ratio_list):
+    """
+    Set new transfer ratio throughout the network
+    :param entities_network:
+    :param constant_transfer_rates_list: list of transfert ratio that will be imposed the "OUR" transaction
+    :param computed_transfer_ratio_list: list of transfer ratio that were computed from the state of the network
+    and that will be imposed to "THEIR" transactions
+    :return:
+    """
     transfer_ratios = []
     constant_transfer_rates = iter(constant_transfer_rates_list)
     computed_transfer_ratio = iter(computed_transfer_ratio_list)
@@ -143,6 +241,13 @@ def compute_transactions_amounts(entities_network):
 
 
 def compute_entities_revenue(entities_network):
+    """
+    compute the revenue of each entity and each of its sub-accounts,
+     taking into account its exogen revenue as well as internal transfers.
+    set the value of the revenue to the entity data and account data (key "computed_revenue")
+    :param entities_network:
+    :return:
+    """
     for entity_id in entities_network.get_network().nodes():
         inbound_transactions = entities_network.get_network().in_edges(entity_id, data=True)
         entity = entities_network.get_network().node[entity_id]
@@ -150,6 +255,13 @@ def compute_entities_revenue(entities_network):
 
 
 def compute_entities_spendings(entities_network):
+    """
+    compute the spending of each entity and each of its sub-accounts,
+     taking into account its exogen spending as well as internal transfers.
+    set the value of the spending to the entity data and account data (key "computed_spending")
+    :param entities_network:
+    :return:
+    """
     for entity_id in entities_network.get_network().nodes():
         outbound_transactions = entities_network.get_network().out_edges(entity_id, data=True)
         entity = entities_network.get_network().node[entity_id]
@@ -157,6 +269,12 @@ def compute_entities_spendings(entities_network):
 
 
 def compute_entities_taxes(entities_network, include_negative_cash_flow=False):
+    """
+    compute the taxes of each entity, provided that its revenue was previously computed
+    :param entities_network:
+    :param include_negative_cash_flow: True or False. True means negative income leads to negative taxes
+    :return:
+    """
     for entity in entities_network.get_network().nodes(data=True):
         entity_data = entity[-1]
         entityModule.compute_taxes(entity_data, include_negative_cash_flow=include_negative_cash_flow)
