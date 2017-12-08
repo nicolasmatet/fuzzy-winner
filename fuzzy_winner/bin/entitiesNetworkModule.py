@@ -55,7 +55,7 @@ def add_accounts_nodes_to_entities(entities_network, accounts_dict_list):
             continue
         entityModule.add_account(owner_entity_data, account_data)
         account_id_to_entity_id_dict[account_data.get("id")] = owner_entity_data.get("id")
-    return accounts_dict_list
+    return account_id_to_entity_id_dict
 
 
 def add_transactions_edges__between_entities(entities_network, transaction_dict_list, account_id_to_entity_id_dict):

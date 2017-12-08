@@ -81,7 +81,7 @@ def get_accounts_cluster(entity):
     account_labels = accountsModule.get_account_labels(accounts)
     account_tooltips = accountsModule.get_account_tooltip(accounts)
     entity_id = entity[0]
-    account_cluster = pydotplus.Subgraph(name='cluster_' + str(entity[0]))
+    account_cluster = pydotplus.Subgraph(name='cluster_' + entity_id)
     for account in accounts.nodes(data=True):
         set_account_to_entity_edge(account_cluster, entity_id, account, account_labels, account_tooltips)
     return account_cluster
@@ -98,8 +98,8 @@ def set_account_to_entity_edge(account_cluster, entity_id, account, accounts_lab
     :return: None
     """
     account_node = pydotplus.Node(accounts_labels.get(account[0]), tooltip=accounts_toooltips.get(account[0]))
-    account_node.add_style("rectangle")
     account_cluster.add_node(account_node)
+    account_cluster.add_node(pydotplus.Node(entity_id))
     account_to_entity_edge = pydotplus.Edge(pydotplus.Node(entity_id), account_node, arrowhead="none", style="dotted")
     account_cluster.add_edge(account_to_entity_edge)
 
@@ -114,13 +114,13 @@ def format_graph(entities_network):
     nx.set_node_attributes(entities_network.get_network(), "fillcolor", "lightgrey")
     nx.set_node_attributes(entities_network.get_network(), "color", "lightblue")
     nx.set_node_attributes(entities_network.get_network(), "style", "filled")
-    # entites nodes display text and tooltip
+    # transaction edges text and tooltip
     edge_label_dict = transactionModule.get_transactions_labels(entities_network)
     edge_tooltip_dict = transactionModule.get_transactions_tooltips(entities_network)
-    nx.set_node_attributes(entities_network.get_network(), "label", node_label_dict)
     nx.set_edge_attributes(entities_network.get_network(), "label", edge_label_dict)
-    # transaction edges text and tooltip
+    nx.set_edge_attributes(entities_network.get_network(), "labeltooltip", edge_tooltip_dict)
+    # entites nodes display text and tooltip
     node_label_dict = entityModule.get_entities_labels(entities_network)
     node_tooltip_dict = entityModule.get_entities_tooltips(entities_network)
     nx.set_node_attributes(entities_network.get_network(), "tooltip", node_tooltip_dict)
-    nx.set_edge_attributes(entities_network.get_network(), "labeltooltip", edge_tooltip_dict)
+    nx.set_node_attributes(entities_network.get_network(), "label", node_label_dict)

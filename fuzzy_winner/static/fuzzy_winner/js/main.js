@@ -1,41 +1,5 @@
 
 
-//<!--AJAX for file form submit-->
-//    $('#deletion_form').on('submit', function(event){
-//        event.preventDefault();
-//        console.log("form submitted!")  // sanity check
-//        delete_file();
-//    });
-//
-//
-//
-//    function delete_file() {
-//
-//        console.log("delete_file is working!") // sanity check
-//        var frm = $('#deletion_form');
-//
-//        $.ajax({
-//            url : "/polls/delete_file/", // the endpoint
-//            type : "POST", // http method
-//            data : { to_be_deleted : frm.serialize()}, // data sent with the post request
-//
-//            // handle a successful response
-//            success : function(json) {
-//                $('#deletion_form').val(''); // remove the value from the input
-//                console.log(json); // log the returned json to the console
-//                console.log("success"); // another sanity check
-//            },
-//
-//            // handle a non-successful response
-//            error : function(xhr,errmsg,err) {
-//                $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-//                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-//                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-//            }
-//        });
-//    };
-//
-
 <!--interaction with the graph-->
     function showDetail() {
        document.getElementById('welcomeDiv').style.display = "block";
@@ -45,24 +9,6 @@
 
     function onoff(node,all_nodes,all_edges,svg,svgiframe) {
 
-/*
-            node.addEventListener('click', function(e){
-                  var div = document.createElement('div');
-                  div.className = 'detailPane';
-                   div.style.backgroundColor = "red";
-                   div.style.position = "absolute";
-                   div.style.width = "100px";
-                   div.style.height="100px";
-                   //div.style.zIndex = "100";
-                   parent = document.getElementsByTagName('body')[0];
-
-                    var pos = node.getBoundingClientRect();
-                    var posRef = svgiframe.getBoundingClientRect();
-                   div.style.left = posRef.left + pos.left+'px';
-                   div.style.top = posRef.top+pos.top+'px';
-                  parent.appendChild(div);
-             });
-*/
 
             node.addEventListener('mouseover', function(e) {
 
@@ -70,8 +16,6 @@
                 var allelmnb = all_nodes.length;
                 for (var i = 0; i < allelmnb; i++) {
                     all_nodes[i].style.opacity = "0.05";
-                    //all_node[i].className =  all_node[i].className.replace(new RegExp('(?:^|\\s)'+ 'activated' + '(?:\\s|$)'), ' ');
-                    //all_node[i].className += ' ' + 'desactivated'
                }
                 var allelmnb = all_edges.length;
                 for (var i = 0; i < allelmnb; i++) {
@@ -111,15 +55,12 @@
            node.addEventListener('mouseout', function(e) {
                 var allelmnb = all_nodes.length;
                 for (var i = 0; i < allelmnb; i++) {
-                    //all_node[i].className =  all_node[i].className.replace(new RegExp('(?:^|\\s)'+ 'desactivated' + '(?:\\s|$)'), ' ');
-                    //all_node[i].className += ' ' + 'activated'
                     all_nodes[i].style.opacity = "1";
                     all_nodes[i].style.fill = "";
                 }
                 var allelmnb = all_edges.length;
                 for (var i = 0; i < allelmnb; i++) {
                     all_edges[i].style.opacity = "1";
-                    //all_edges[i].className = "activated";
                 }
 
            });
