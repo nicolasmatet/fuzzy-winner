@@ -1,5 +1,8 @@
 numpy
 scipy
 graphviz
-openyxl
-networkx=1.11
+pydotplus
+openpyxl
+networkx==1.11
+django
+logging

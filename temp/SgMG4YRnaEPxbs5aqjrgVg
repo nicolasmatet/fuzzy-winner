@@ -1,0 +1,74 @@
+digraph "" {
+label="Initial mean tax rate = 18.26 %";
+labelloc=t;
+"EG HYDRO SWITZERLAND" [accounts="", color=lightblue, computed_revenue="164.4", computed_spending="190.773626374", fillcolor=lightgrey, id="EG HYDRO SWITZERLAND", label="EG HYDRO SWITZERLAND\nrevenue: 164.40\nspendings: 190.77\ntaxes: 0.00\nbalance:-26.37", paid_taxes="0.0", style=filled, tax_rate="0.178", tooltip="tax rate: 17.80 %"];
+"EG HYDRO FRANCE" [accounts="", color=lightblue, computed_revenue="126.373626374", computed_spending="78.3516483516", fillcolor=lightgrey, id="EG HYDRO FRANCE", label="EG HYDRO FRANCE\nrevenue: 126.37\nspendings: 78.35\ntaxes: 16.01\nbalance:48.02", paid_taxes="16.005725274725272", style=filled, tax_rate="0.3333", tooltip="tax rate: 33.33 %"];
+"EG HYDRO CHINA" [accounts="", color=lightblue, computed_revenue="115.164835165", computed_spending="26.4879120879", fillcolor=lightgrey, id="EG HYDRO CHINA", label="EG HYDRO CHINA\nrevenue: 115.16\nspendings: 26.49\ntaxes: 22.17\nbalance:88.68", paid_taxes="22.16923076923077", style=filled, tax_rate="0.25", tooltip="tax rate: 25.00 %"];
+"EG AVIATION IRELAND" [accounts="", color=lightblue, computed_revenue="304.15320279", computed_spending="1e-12", fillcolor=lightgrey, id="EG AVIATION IRELAND", label="EG AVIATION IRELAND\nrevenue: 304.15\nspendings: 0.00\ntaxes: 19.77\nbalance:304.15", paid_taxes="19.76995818135513", style=filled, tax_rate="0.065", tooltip="tax rate: 6.50 %"];
+"EG AVIATION UK" [accounts="", color=lightblue, computed_revenue="161.407117311", computed_spending="72.6332027901", fillcolor=lightgrey, id="EG AVIATION UK", label="EG AVIATION UK\nrevenue: 161.41\nspendings: 72.63\ntaxes: 17.75\nbalance:88.77", paid_taxes="17.7547829042415", style=filled, tax_rate="0.2", tooltip="tax rate: 20.00 %"];
+"EG AVIATION US" [accounts="", color=lightblue, computed_revenue="107.497304732", computed_spending="10.7497304732", fillcolor=lightgrey, id="EG AVIATION US", label="EG AVIATION US\nrevenue: 107.50\nspendings: 10.75\ntaxes: 38.70\nbalance:96.75", paid_taxes="38.69902970356053", style=filled, tax_rate="0.4", tooltip="tax rate: 40.00 %"];
+"VIRTUAL HOLDING 1" [accounts="", color=lightblue, computed_revenue="58.1547252747", computed_spending="58.1546915702", fillcolor=lightgrey, id="VIRTUAL HOLDING 1", label="VIRTUAL HOLDING 1\nrevenue: 58.15\nspendings: 58.15\ntaxes: 0.00\nbalance:0.00", paid_taxes="0.0", style=filled, tax_rate="0.0", tooltip="tax rate: 0.00 %"];
+"EG HYDRO SWITZERLAND" -> "EG AVIATION IRELAND"  [computed_amount="131.52", destinatary_account="IR23 5412 4567 8953 1547 82", id="iSdegT1f4m-ir4juR2OLOg", initiator_account="CH12 4568 4623 5896 4587 21", key=0, label="131.52 (80.00 %)", labeltooltip="transfer ratio: 80.00 %", reference_accounts="{'CH12 4568 4623 5896 4587 21', 'CH78 4256 4874 9125 6532 56'}", transfer_ratio="0.8", transfer_ratio_bounds="(0, 0.5)", transfer_ratio_calculation=OUR];
+"EG HYDRO SWITZERLAND" -> "EG HYDRO FRANCE"  [computed_amount="26.3736263736", destinatary_account="FR24 1235 4578 9876 5874  23", id=wKrQIJ1f1WPAjIdxOJf72A, initiator_account="CH12 4568 4623 5896 4587 21", key=0, label="26.37 (30.00 %)", labeltooltip="transfer ratio: 30.00 %", reference_accounts="{'CH12 4568 4623 5896 4587 21'}", transfer_ratio="0.3", transfer_ratio_bounds="(0, 1)", transfer_ratio_calculation=OUR];
+"EG HYDRO SWITZERLAND" -> "VIRTUAL HOLDING 1"  [computed_amount="32.88", destinatary_account=VIRTUAL_ACCOUNT1, id=W9pNrgP1ZcrWcL8HEQSLJg, initiator_account="CH78 4256 4874 9125 6532 56", key=0, label="32.88 (20.00 %)", labeltooltip="transfer ratio: 20.00 %", reference_accounts="{'CH12 4568 4623 5896 4587 21', 'CH78 4256 4874 9125 6532 56'}", transfer_ratio="0.2", transfer_ratio_bounds="(0.2, 0.2)", transfer_ratio_calculation=OUR];
+"EG HYDRO FRANCE" -> "EG HYDRO SWITZERLAND"  [computed_amount="37.9120879121", destinatary_account="CH12 4568 4623 5896 4587 21", id="5h3zQY3Hc0FTHrZ-_wCo8A", initiator_account="FR24 1235 4578 9876 5874  23", key=0, label="37.91 (30.00 %)", labeltooltip="transfer ratio: 30.00 %", reference_accounts="{'FR24 1235 4578 9876 5874  23'}", transfer_ratio="0.3", transfer_ratio_bounds="(0, 0.5)", transfer_ratio_calculation=OUR];
+"EG HYDRO FRANCE" -> "EG HYDRO CHINA"  [computed_amount="15.1648351648", destinatary_account="CN45 8574 5698 4785 2365 14", id=Jr37aDpIjzsd8zSn22EmHw, initiator_account="FR24 1235 4578 9876 5874  23", key=0, label="15.16 (12.00 %)", labeltooltip="transfer ratio: 12.00 %", reference_accounts="{'FR24 1235 4578 9876 5874  23'}", transfer_ratio="0.12", transfer_ratio_bounds="(0, 0.5)", transfer_ratio_calculation=OUR];
+"EG HYDRO FRANCE" -> "VIRTUAL HOLDING 1"  [computed_amount="25.2747252747", destinatary_account=VIRTUAL_ACCOUNT1, id=xLBkFG3oE5yD7M7hQS_yig, initiator_account="FR24 1235 4578 9876 5874  23", key=0, label="25.27 (20.00 %)", labeltooltip="transfer ratio: 20.00 %", reference_accounts="{'FR24 1235 4578 9876 5874  23'}", transfer_ratio="0.2", transfer_ratio_bounds="(0.2, 0.2)", transfer_ratio_calculation=OUR];
+"EG HYDRO CHINA" -> "EG HYDRO SWITZERLAND"  [computed_amount="26.4879120879", destinatary_account="CH78 4256 4874 9125 6532 56", id="wRlErbD-nkkrnXplz6MI0Q", initiator_account="CN45 8574 5698 4785 2365 14", key=0, label="26.49 (23.00 %)", labeltooltip="transfer ratio: 23.00 %", reference_accounts="{'CN45 8574 5698 4785 2365 14'}", transfer_ratio="0.23", transfer_ratio_bounds="(0, 0.5)", transfer_ratio_calculation=OUR];
+"EG AVIATION UK" -> "EG AVIATION IRELAND"  [computed_amount="72.6332027901", destinatary_account="IR23 5412 4567 8953 1547 82", id=ylGumqj3EcIzT7uXGuNkgg, initiator_account="UK54 2546 8741 6873 6984 52", key=0, label="72.63 (45.00 %)", labeltooltip="transfer ratio: 45.00 %", reference_accounts="{'UK54 2546 8741 6873 6984 52'}", transfer_ratio="0.45", transfer_ratio_bounds="(0, 0.5)", transfer_ratio_calculation=OUR];
+"EG AVIATION US" -> "EG AVIATION UK"  [computed_amount="10.7497304732", destinatary_account="UK54 2546 8741 6873 6984 52", id=VL88kS1pGVOcN14jO_mxKQ, initiator_account="US47 2523 5159 8875 2973 47", key=0, label="10.75 (10.00 %)", labeltooltip="transfer ratio: 10.00 %", reference_accounts="{'US47 2523 5159 8875 2973 47'}", transfer_ratio="0.1", transfer_ratio_bounds="(0, 1)", transfer_ratio_calculation=OUR];
+"VIRTUAL HOLDING 1" -> "EG AVIATION UK"  [computed_amount="50.6573868381", destinatary_account="UK54 2546 8741 6873 6984 52", id=EdRRUO7Ov42znYoYvn_7WQ, initiator_account=VIRTUAL_ACCOUNT1, key=0, label="50.66 (69.74 %)", labeltooltip="transfer ratio: 69.74 %", reference_accounts="{'UK54 2546 8741 6873 6984 52'}", transfer_ratio="0.697441182437", transfer_ratio_bounds="(0, 1)", transfer_ratio_calculation=THEIR];
+"VIRTUAL HOLDING 1" -> "EG AVIATION US"  [computed_amount="7.49730473211", destinatary_account="US47 2523 5159 8875 2973 47", id=_rSk_JuuqFEq4B9T6f2YnA, initiator_account=VIRTUAL_ACCOUNT1, key=0, label="7.50 (69.74 %)", labeltooltip="transfer ratio: 69.74 %", reference_accounts="{'US47 2523 5159 8875 2973 47'}", transfer_ratio="0.697441182437", transfer_ratio_bounds="(0, 1)", transfer_ratio_calculation=THEIR];
+subgraph "" {
+name="cluster_EG HYDRO SWITZERLAND";
+"CH12 4568 4623 5896 4587 21\ninitial balance 0.000\nfinal balance -69.982\n" [tooltip="exogen revenue 50.00   /   exogen spendings 0.00"];
+"EG HYDRO SWITZERLAND";
+"EG HYDRO SWITZERLAND" -> "CH12 4568 4623 5896 4587 21\ninitial balance 0.000\nfinal balance -69.982\n"  [arrowhead=none, style=dotted];
+"CH78 4256 4874 9125 6532 56\ninitial balance 0.000\nfinal balance 43.608\n" [tooltip="exogen revenue 50.00   /   exogen spendings 0.00"];
+"EG HYDRO SWITZERLAND";
+"EG HYDRO SWITZERLAND" -> "CH78 4256 4874 9125 6532 56\ninitial balance 0.000\nfinal balance 43.608\n"  [arrowhead=none, style=dotted];
+}
+
+subgraph "" {
+name="cluster_EG HYDRO FRANCE";
+"FR24 1235 4578 9876 5874  23\ninitial balance 0.000\nfinal balance 48.022\n" [tooltip="exogen revenue 100.00   /   exogen spendings 0.00"];
+"EG HYDRO FRANCE";
+"EG HYDRO FRANCE" -> "FR24 1235 4578 9876 5874  23\ninitial balance 0.000\nfinal balance 48.022\n"  [arrowhead=none, style=dotted];
+}
+
+subgraph "" {
+name="cluster_EG HYDRO CHINA";
+"CN45 8574 5698 4785 2365 14\ninitial balance 0.000\nfinal balance 88.677\n" [tooltip="exogen revenue 100.00   /   exogen spendings 0.00"];
+"EG HYDRO CHINA";
+"EG HYDRO CHINA" -> "CN45 8574 5698 4785 2365 14\ninitial balance 0.000\nfinal balance 88.677\n"  [arrowhead=none, style=dotted];
+}
+
+subgraph "" {
+name="cluster_EG AVIATION IRELAND";
+"IR23 5412 4567 8953 1547 82\ninitial balance 0.000\nfinal balance 304.153\n" [tooltip="exogen revenue 100.00   /   exogen spendings 0.00"];
+"EG AVIATION IRELAND";
+"EG AVIATION IRELAND" -> "IR23 5412 4567 8953 1547 82\ninitial balance 0.000\nfinal balance 304.153\n"  [arrowhead=none, style=dotted];
+}
+
+subgraph "" {
+name="cluster_EG AVIATION UK";
+"UK54 2546 8741 6873 6984 52\ninitial balance 0.000\nfinal balance 88.774\n" [tooltip="exogen revenue 100.00   /   exogen spendings 0.00"];
+"EG AVIATION UK";
+"EG AVIATION UK" -> "UK54 2546 8741 6873 6984 52\ninitial balance 0.000\nfinal balance 88.774\n"  [arrowhead=none, style=dotted];
+}
+
+subgraph "" {
+name="cluster_EG AVIATION US";
+"US47 2523 5159 8875 2973 47\ninitial balance 0.000\nfinal balance 96.748\n" [tooltip="exogen revenue 100.00   /   exogen spendings 0.00"];
+"EG AVIATION US";
+"EG AVIATION US" -> "US47 2523 5159 8875 2973 47\ninitial balance 0.000\nfinal balance 96.748\n"  [arrowhead=none, style=dotted];
+}
+
+subgraph "" {
+name="cluster_VIRTUAL HOLDING 1";
+"VIRTUAL_ACCOUNT1\ninitial balance 0.000\nfinal balance 0.000\n" [tooltip="exogen revenue 0.00   /   exogen spendings 0.00"];
+"VIRTUAL HOLDING 1";
+"VIRTUAL HOLDING 1" -> "VIRTUAL_ACCOUNT1\ninitial balance 0.000\nfinal balance 0.000\n"  [arrowhead=none, style=dotted];
+}
+
+}

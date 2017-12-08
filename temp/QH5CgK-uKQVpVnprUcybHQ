@@ -1,0 +1,36 @@
+digraph "" {
+label="Optimized mean tax rate = 17.80 %";
+labelloc=t;
+"EG HYDRO SWITZERLAND" [accounts="", color=lightblue, computed_revenue="300.0", computed_spending="2e-12", fillcolor=lightgrey, id="EG HYDRO SWITZERLAND", label="EG HYDRO SWITZERLAND\nrevenue: 300.00\nspendings: 0.00\ntaxes: 53.40\nbalance:300.00", paid_taxes="53.400000000017805", style=filled, tax_rate="0.178", tooltip="tax rate: 17.80 %"];
+"EG HYDRO FRANCE" [accounts="", color=lightblue, computed_revenue="200.0", computed_spending="200.0", fillcolor=lightgrey, id="EG HYDRO FRANCE", label="EG HYDRO FRANCE\nrevenue: 200.00\nspendings: 200.00\ntaxes: 0.00\nbalance:0.00", paid_taxes="0.0", style=filled, tax_rate="0.3333", tooltip="tax rate: 33.33 %"];
+"EG HYDRO CHINA" [accounts="", color=lightblue, computed_revenue="100.0", computed_spending="100.0", fillcolor=lightgrey, id="EG HYDRO CHINA", label="EG HYDRO CHINA\nrevenue: 100.00\nspendings: 100.00\ntaxes: 0.00\nbalance:-0.00", paid_taxes="0.0", style=filled, tax_rate="0.25", tooltip="tax rate: 25.00 %"];
+"EG HYDRO FRANCE" -> "EG HYDRO SWITZERLAND"  [computed_amount="200.0", destinatary_account="CH78 4256 4874 9125 6532 56", id=HvDMKnu0197ypNvO62CcWg, initiator_account="FR24 1235 4578 9876 5874  23", key=0, label="200.00 (100.00 %)", labeltooltip="transfer ratio: 100.00 %", reference_accounts="{'FR24 1235 4578 9876 5874  23'}", transfer_ratio="1.0", transfer_ratio_bounds="(0, 1)", transfer_ratio_calculation=OUR];
+"EG HYDRO CHINA" -> "EG HYDRO FRANCE"  [computed_amount="100.0", destinatary_account="FR24 1235 4578 9876 5874  23", id=GtietzNTsWa9WOndwsG4Vw, initiator_account="CN45 8574 5698 4785 2365 14", key=0, label="100.00 (100.00 %)", labeltooltip="transfer ratio: 100.00 %", reference_accounts="{'CN45 8574 5698 4785 2365 14'}", transfer_ratio="1.0", transfer_ratio_bounds="(0, 1)", transfer_ratio_calculation=OUR];
+subgraph cluster_subG {
+name="cluster_ecmRuYQvBpU-GP7X4RhU2g";
+rankdir=TB;
+"CH12 4568 4623 5896 4587 21\ninitial balance 0.000\nfinal balance 50.000\n" [tooltip="exogen revenue 50.00   /   exogen spendings 0.00"];
+"EG HYDRO SWITZERLAND";
+"EG HYDRO SWITZERLAND" -> "CH12 4568 4623 5896 4587 21\ninitial balance 0.000\nfinal balance 50.000\n"  [arrowhead=none, style=dotted];
+"CH78 4256 4874 9125 6532 56\ninitial balance 0.000\nfinal balance 250.000\n" [tooltip="exogen revenue 50.00   /   exogen spendings 0.00"];
+"EG HYDRO SWITZERLAND";
+"EG HYDRO SWITZERLAND" -> "CH78 4256 4874 9125 6532 56\ninitial balance 0.000\nfinal balance 250.000\n"  [arrowhead=none, style=dotted];
+}
+
+subgraph cluster_subG {
+name=cluster_NGx7lUgFLaC3Ye2spXDWhQ;
+rankdir=TB;
+"FR24 1235 4578 9876 5874  23\ninitial balance 0.000\nfinal balance 0.000\n" [tooltip="exogen revenue 100.00   /   exogen spendings 0.00"];
+"EG HYDRO FRANCE";
+"EG HYDRO FRANCE" -> "FR24 1235 4578 9876 5874  23\ninitial balance 0.000\nfinal balance 0.000\n"  [arrowhead=none, style=dotted];
+}
+
+subgraph cluster_subG {
+name="cluster_FuxrCq154x_d-UTwMQVpjA";
+rankdir=TB;
+"CN45 8574 5698 4785 2365 14\ninitial balance 0.000\nfinal balance -0.000\n" [tooltip="exogen revenue 100.00   /   exogen spendings 0.00"];
+"EG HYDRO CHINA";
+"EG HYDRO CHINA" -> "CN45 8574 5698 4785 2365 14\ninitial balance 0.000\nfinal balance -0.000\n"  [arrowhead=none, style=dotted];
+}
+
+}

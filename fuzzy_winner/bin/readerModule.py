@@ -11,7 +11,7 @@ from . import utils
 This module parses an input .xlsx file to define the entities, transactions and accounts of the network
 """
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 # define the header of data blocks as well as the length (in rows) of each block type
 ENTITY_TYPE = "entity"
